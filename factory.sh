@@ -167,3 +167,44 @@ if command -v tree &> /dev/null; then
 else
     find "$PROJECT_DIR" | sed -e "s|[^/]*/|  |g"
 fi
+# --- Part 4: Environment Validation (Health Check) ---
+echo ""
+echo "--- Environment Validation (Health Check) ---"
+
+# 1. Check if python3 is installed
+if command -v python3 &> /dev/null; then
+    PYTHON_VERSION=$(python3 --version 2>&1)
+    echo "[OK] python3 is installed: ${PYTHON_VERSION}"
+else
+    echo "[WARNING] python3 was not found on this system."
+    echo "          The attendance_checker.py script will not run without it."
+fi
+
+# 2. Verify the application directory structure
+echo ""
+echo "Verifying project structure..."
+
+REQUIRED_PATHS=(
+    "$PROJECT_DIR/attendance_checker.py"
+    "$PROJECT_DIR/Helpers/assets.csv"
+    "$PROJECT_DIR/Helpers/config.json"
+    "$PROJECT_DIR/reports/reports.log"
+)
+
+STRUCTURE_OK=true
+
+for path in "${REQUIRED_PATHS[@]}"; do
+    if [[ -e "$path" ]]; then
+        echo "[OK] Found: $path"
+    else
+        echo "[ERROR] Missing: $path"
+        STRUCTURE_OK=false
+    fi
+done
+
+echo ""
+if [[ "$STRUCTURE_OK" == true ]]; then
+    echo "[OK] Project structure is valid. Setup complete."
+else
+    echo "[WARNING] Project structure is incomplete. Please review the errors above."
+fi
