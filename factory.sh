@@ -20,6 +20,32 @@ fi
 
 INPUT="$1"
 PROJECT_DIR="attendance_tracker_${INPUT}"
+ARCHIVE_NAME="attendance_tracker_${INPUT}_archive.tar.gz"
+
+# --- Part 3: Process Management (The Trap) ---
+# Signal handler: triggered when the user presses Ctrl+C (SIGINT)
+cleanup_on_interrupt() {
+    echo ""
+    echo "Signal caught: SIGINT (Ctrl+C) received."
+
+    if [[ -d "$PROJECT_DIR" ]]; then
+        echo "Archiving current (incomplete) state to '${ARCHIVE_NAME}'..."
+        tar -czf "$ARCHIVE_NAME" "$PROJECT_DIR"
+
+        echo "Removing incomplete directory '${PROJECT_DIR}'..."
+        rm -rf "$PROJECT_DIR"
+
+        echo "Cleanup complete. Archive saved as '${ARCHIVE_NAME}'."
+    else
+        echo "No partial directory found to archive."
+    fi
+
+    echo "Exiting script."
+    exit 130
+}
+
+# Register the trap
+trap cleanup_on_interrupt SIGINT
 
 # --- Prevent overwriting an existing project ---
 if [[ -d "$PROJECT_DIR" ]]; then
