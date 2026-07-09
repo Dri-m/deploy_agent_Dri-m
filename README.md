@@ -25,8 +25,8 @@ attendance_tracker_<input>/
 
 It also:
 - Lets you interactively update the attendance warning/failure
-- Gracefully handles interruptions (Ctrl+C) by archiving the in-progress work
-- Performs a health check to confirm the environment is okay
+- Handles interruptions (Ctrl+C) by archiving the in-progress work
+- Performs a health check to confirm the environment is working
 
 ## How to run the script
 
